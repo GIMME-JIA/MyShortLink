@@ -1,8 +1,6 @@
 package org.jia.mylink.admin.dto.response;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
-import org.jia.mylink.admin.common.serialize.PhoneDesensitizationSerializer;
 
 /**
  * 用户响应实体
@@ -11,7 +9,7 @@ import org.jia.mylink.admin.common.serialize.PhoneDesensitizationSerializer;
  * @since 2024/3/8
  */
 @Data
-public class UserRespDTO {
+public class UserActualRespDTO {
 
     /**
      * 用户id
@@ -31,7 +29,6 @@ public class UserRespDTO {
     /**
      * 手机号
      */
-    @JsonSerialize(using = PhoneDesensitizationSerializer.class)
     private String phone;
 
     /**
