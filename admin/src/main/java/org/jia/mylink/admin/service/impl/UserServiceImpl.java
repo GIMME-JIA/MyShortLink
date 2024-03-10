@@ -78,7 +78,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY + username);     // 只有相同用户名才会获取同一把锁
 
         try{
-            if (lock.tryLock()) {
+             if (lock.tryLock()) {
                 UserDO userDO = BeanUtil.toBean(requestParam, UserDO.class);
                 int inserted = baseMapper.insert(userDO);
 
