@@ -15,9 +15,12 @@ import org.jia.mylink.admin.dto.request.UserRegisterReqDTO;
 import org.jia.mylink.admin.dto.response.UserRespDTO;
 import org.jia.mylink.admin.service.UserService;
 import org.redisson.api.RBloomFilter;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import static org.jia.mylink.admin.common.constant.RedisCacheConstant.LOCK_USER_REGISTER_KEY;
 import static org.jia.mylink.admin.common.enums.UserErrorCodeEnum.USER_NAME_EXIST;
 import static org.jia.mylink.admin.common.enums.UserErrorCodeEnum.USER_SAVE_ERROR;
 
@@ -38,6 +41,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
      * 用户注册缓存穿透布隆过滤器
      */
     private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
+
+
+    private final RedissonClient redissonClient;
 
 
     @Override
@@ -63,16 +69,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Override
     public void registerUser(UserRegisterReqDTO requestParam) {
-        if (!hasUsername(requestParam.getUsername())) {
+        String username = requestParam.getUsername();
+
+        if (!hasUsername(username)) {
             throw new ClientException(USER_NAME_EXIST);
         }
 
-        UserDO userDO = BeanUtil.toBean(requestParam, UserDO.class);
-        int inserted = baseMapper.insert(userDO);
+        RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY + username);     // 只有相同用户名才会获取同一把锁
 
-        if(inserted < 1){
-            throw new ClientException((USER_SAVE_ERROR));
+        try{
+            if (lock.tryLock()) {
+                UserDO userDO = BeanUtil.toBean(requestParam, UserDO.class);
+                int inserted = baseMapper.insert(userDO);
+
+                if(inserted < 1){
+                    throw new ClientException((USER_SAVE_ERROR));
+                }
+
+                userRegisterCachePenetrationBloomFilter.add(requestParam.getUsername());
+            }else {
+                throw new ClientException((USER_SAVE_ERROR));
+            }
+        }finally {
+            lock.unlock();
         }
-        userRegisterCachePenetrationBloomFilter.add(requestParam.getUsername());
+
     }
 }
