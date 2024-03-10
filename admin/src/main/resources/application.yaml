@@ -2,6 +2,15 @@ server:
   port: 8002
 
 spring:
+
+# redis配置
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+#      password: 123456   # redis没设置密码就不用管
+
+# mysql配置
   datasource:
     username: root
     password: Ljf20031227 # 数据库密码
@@ -13,3 +22,4 @@ spring:
       idle-timeout: 300000
       maximum-pool-size: 5
       minimum-idle: 5
+

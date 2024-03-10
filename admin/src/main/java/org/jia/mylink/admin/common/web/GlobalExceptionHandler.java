@@ -27,7 +27,7 @@ import java.util.Optional;
  * @since 2024/3/9
  */
 @Slf4j
-@Component
+@Component("globalExceptionHandlerByAdmin")
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     /**
@@ -67,6 +67,11 @@ public class GlobalExceptionHandler {
         return Results.failure();
     }
 
+    /**
+     * 获取请求url
+     * @param request 请求
+     * @return url
+     */
     private String getUrl(HttpServletRequest request) {
         if (StringUtils.isEmpty(request.getQueryString())) {
             return request.getRequestURL().toString();

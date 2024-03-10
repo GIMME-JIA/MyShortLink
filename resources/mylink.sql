@@ -9,7 +9,7 @@ use mylink_database;
 drop table if exists t_user;
 CREATE TABLE `t_user` (
                           `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-                          `username` varchar(256) DEFAULT NULL COMMENT '用户名',
+                          `username` VARCHAR(256) COMMENT '用户名' UNIQUE DEFAULT NULL,
                           `password` varchar(512) DEFAULT NULL COMMENT '密码',
                           `real_name` varchar(256) DEFAULT NULL COMMENT '真实姓名',
                           `phone` varchar(128) DEFAULT NULL COMMENT '手机号',
