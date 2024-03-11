@@ -87,6 +87,7 @@ public class UserController {
 
     /**
      * 校验用户是否处于登录状态
+     * @param username 用户名
      * @param token 登录标识
      */
     @GetMapping("/check-login")
@@ -95,6 +96,15 @@ public class UserController {
         return Results.success(userService.checkLogin(username,token));
     }
 
-
+    /**
+     * 用户退出登录
+     * @param username 用户名
+     * @param token 登录标识
+     */
+    @DeleteMapping("/logout")
+    public Result<Void> logout(@RequestParam("username") String username,@RequestParam("token") String token){
+        userService.logout(username,token);
+        return Results.success();
+    }
 
 }
