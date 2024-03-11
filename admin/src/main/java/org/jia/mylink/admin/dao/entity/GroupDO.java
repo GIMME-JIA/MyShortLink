@@ -8,53 +8,40 @@ import lombok.NoArgsConstructor;
 import org.jia.mylink.admin.dao.base.BaseDO;
 
 /**
- * 用户持久层实体
- *
+ * 分组持久层实体
  * @author JIA
  * @version 1.0
- * @since 2024/3/7
+ * @since 2024/3/11
  */
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("t_user")
-public class UserDO extends BaseDO {
-
+@TableName("t_group")
+public class GroupDO extends BaseDO {
     /**
-     * 用户id
+     * id
      */
     private Long id;
 
     /**
-     * 用户名
+     * 分组标识
+     */
+    private String gid;
+
+    /**
+     * 分组名称
+     */
+    private String name;
+
+    /**
+     * 创建分组用户名
      */
     private String username;
 
     /**
-     * 密码
+     * 分组排序
      */
-    private String password;
-
-    /**
-     * 真实姓名
-     */
-    private String realName;
-
-    /**
-     * 手机号
-     */
-    private String phone;
-
-    /**
-     * 邮箱
-     */
-    private String mail;
-
-    /**
-     * 注销时间戳
-     */
-    private Long deletionTime;
+    private Integer sortOrder;
 
 }

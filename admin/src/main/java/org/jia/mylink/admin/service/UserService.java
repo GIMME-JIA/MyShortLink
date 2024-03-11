@@ -9,7 +9,7 @@ import org.jia.mylink.admin.dto.response.UserLoginRespDTO;
 import org.jia.mylink.admin.dto.response.UserRespDTO;
 
 /**
- * 用户接口层
+ * 用户服务接口层
  *
  * @author JIA
  * @version 1.0

@@ -34,7 +34,7 @@ import static org.jia.mylink.admin.common.constant.RedisCacheConstant.LOCK_USER_
 import static org.jia.mylink.admin.common.enums.UserErrorCodeEnum.*;
 
 /**
- * 用户接口实现层
+ * 用户服务实现层
  *
  * @author JIA
  * @version 1.0
