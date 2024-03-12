@@ -48,7 +48,13 @@ public enum UserErrorCodeEnum implements IErrorCode {
      */
     USER_HAS_LOGIN("B000210", "用户已登录"),
 
+    /**
+     * 用户未登录
+     */
     USER_NOT_LOGIN("B000211", "用户未登录");
+
+
+
 
     private final String code;
 
