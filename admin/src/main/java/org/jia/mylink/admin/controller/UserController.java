@@ -92,7 +92,6 @@ public class UserController {
      */
     @GetMapping("/check-login")
     public Result<Boolean> checkLogin(@RequestParam("username") String username,@RequestParam("token") String token){
-        // TODO (JIA,2024/3/11,11:48) 改为双token 模式登录
         return Results.success(userService.checkLogin(username,token));
     }
 

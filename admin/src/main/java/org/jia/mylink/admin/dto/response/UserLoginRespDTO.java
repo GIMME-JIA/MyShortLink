@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserLoginRespDTO {
-    // TODO (JIA,2024/3/11,11:16) 改为双token模式登录
     /**
      * 用户token
      */
