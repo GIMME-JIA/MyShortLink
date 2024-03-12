@@ -137,7 +137,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
             throw new ClientException(USER_HAS_LOGIN);
         }
 
-        /**
+        /*
          * Hash
          * Key:login_用户名
          * Value：

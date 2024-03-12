@@ -1,2 +1,24 @@
 server:
   port: 8001
+
+spring:
+
+  # redis配置
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+  #      password: 123456   # redis没设置密码就不用管
+
+  datasource:
+    username: root
+    password: Ljf20031227 # 数据库密码
+    url: jdbc:mysql://127.0.0.1:3306/mylink_database?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-test-query: select 1
+      connection-timeout: 20000
+      idle-timeout: 300000
+      maximum-pool-size: 5
+      minimum-idle: 5
