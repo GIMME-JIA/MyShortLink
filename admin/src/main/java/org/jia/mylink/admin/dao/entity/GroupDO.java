@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.jia.mylink.admin.dao.base.BaseDO;
 
 /**
- * 分组持久层实体
+ * 短链接分组持久层实体
  * @author JIA
  * @version 1.0
  * @since 2024/3/11

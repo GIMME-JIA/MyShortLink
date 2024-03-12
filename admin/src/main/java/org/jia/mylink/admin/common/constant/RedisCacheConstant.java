@@ -11,7 +11,12 @@ public class RedisCacheConstant {
     /**
      * 注册用户时分布式锁
      */
-    public static final String LOCK_USER_REGISTER_KEY = "short-link_lock_user-register";
+    public static final String LOCK_USER_REGISTER_KEY = "short-link:lock_user-register:";
+
+    /**
+     * 分组创建分布式锁
+     */
+    public static final String LOCK_GROUP_CREATE_KEY = "short-link:lock_group-create:%s";
 
     /**
      * 用户登录缓存key前缀
