@@ -29,8 +29,8 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static org.jia.mylink.admin.common.constant.RedisCacheConstant.KEY_USER_LOGIN;
-import static org.jia.mylink.admin.common.constant.RedisCacheConstant.LOCK_USER_REGISTER_KEY;
+import static org.jia.mylink.admin.common.constant.RedisCacheConstant.*;
+import static org.jia.mylink.admin.common.constant.ServiceConstant.DEL_FLAG_0;
 import static org.jia.mylink.admin.common.enums.UserErrorCodeEnum.*;
 
 /**
@@ -124,7 +124,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         LambdaQueryWrapper<UserDO> queryWrapper = Wrappers.lambdaQuery(UserDO.class)
                 .eq(UserDO::getUsername, requestParam.getUsername())
                 .eq(UserDO::getPassword, requestParam.getPassword())
-                .eq(UserDO::getDelFlag, 0);
+                .eq(UserDO::getDelFlag, DEL_FLAG_0);
         UserDO userDO = baseMapper.selectOne(queryWrapper);
 
         if (userDO == null) {
@@ -147,7 +147,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
         String token = UUID.randomUUID().toString();
         stringRedisTemplate.opsForHash().put(key, token, JSON.toJSONString(userDO));
-        stringRedisTemplate.expire(key, 30L, TimeUnit.DAYS);
+        stringRedisTemplate.expire(key, TIME_OUT_30, TimeUnit.DAYS);
 
         return new UserLoginRespDTO(token);
 
