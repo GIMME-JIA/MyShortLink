@@ -1,7 +1,9 @@
 package org.jia.mylink.admin.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -10,20 +12,20 @@ import org.jia.mylink.admin.common.biz.UserContext;
 import org.jia.mylink.admin.common.convention.exception.ClientException;
 import org.jia.mylink.admin.dao.entity.GroupDO;
 import org.jia.mylink.admin.dao.mapper.GroupMapper;
+import org.jia.mylink.admin.dto.request.ShortLinkGroupSortReqDTO;
+import org.jia.mylink.admin.dto.request.ShortLinkGroupUpdateReqDTO;
+import org.jia.mylink.admin.dto.response.ShortLinkGroupListRespDTO;
 import org.jia.mylink.admin.service.GroupService;
 import org.jia.mylink.admin.toolkit.RandomGenerator;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
 import java.util.Optional;
 
-
 import static org.jia.mylink.admin.common.constant.RedisCacheConstant.LOCK_GROUP_CREATE_KEY;
-import static org.jia.mylink.admin.common.constant.ServiceConstant.GROUP_MAX_NUMBER;
-import static org.jia.mylink.admin.common.constant.ServiceConstant.OUT_OF_GROUP_MAX_NUM;
+import static org.jia.mylink.admin.common.constant.ServiceConstant.*;
 
 
 /**
@@ -53,7 +55,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
         try {
             LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                     .eq(GroupDO::getUsername, username)
-                    .eq(GroupDO::getDelFlag, 0);
+                    .eq(GroupDO::getDelFlag, DEL_FLAG_0);
             List<GroupDO> groupDOList = baseMapper.selectList(queryWrapper);
 
             if(CollUtil.isNotEmpty(groupDOList) && groupDOList.size() == GROUP_MAX_NUMBER){
@@ -67,7 +69,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
 
             GroupDO groupDO = GroupDO.builder()
                     .gid(gid)
-                    .sortOrder(0)
+                    .sortOrder(SORT_ORDER_0)
                     .username(username)
                     .name(groupName)
                     .build();
@@ -78,6 +80,62 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
             lock.unlock();
         }
     }
+
+    @Override
+    public List<ShortLinkGroupListRespDTO> listGroup() {
+        // TODO (JIA,2024/3/12,11:55) 查询短链接分组集合服务层功能待优化
+        LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
+                .eq(GroupDO::getDelFlag, DEL_FLAG_0)
+                .eq(GroupDO::getUsername, UserContext.getUsername())
+                .orderByDesc(GroupDO::getSortOrder, GroupDO::getUpdateTime);
+
+        List<GroupDO> groupDOList = baseMapper.selectList(queryWrapper);
+
+        return BeanUtil.copyToList(groupDOList, ShortLinkGroupListRespDTO.class);
+    }
+
+    @Override
+    public void updateGroup(ShortLinkGroupUpdateReqDTO requestParam) {
+        LambdaUpdateWrapper<GroupDO> updateWrapper = Wrappers.lambdaUpdate(GroupDO.class)
+                .eq(GroupDO::getUsername, UserContext.getUsername())
+                .eq(GroupDO::getGid, requestParam.getGid())
+                .eq(GroupDO::getDelFlag, DEL_FLAG_0);
+
+        GroupDO groupDO = new GroupDO();
+        groupDO.setName(requestParam.getName());
+
+        baseMapper.update(groupDO, updateWrapper);
+    }
+
+    @Override
+    public void deleteGroup(String gid) {
+        LambdaUpdateWrapper<GroupDO> updateWrapper = Wrappers.lambdaUpdate(GroupDO.class)
+                .eq(GroupDO::getUsername, UserContext.getUsername())
+                .eq(GroupDO::getGid, gid)
+                .eq(GroupDO::getDelFlag, DEL_FLAG_0);
+
+        GroupDO groupDO = new GroupDO();
+        groupDO.setDelFlag(DEL_FLAG_1);
+
+        baseMapper.update(groupDO, updateWrapper);
+    }
+
+    @Override
+    public void sortGroup(List<ShortLinkGroupSortReqDTO> requestParam) {
+        requestParam.forEach(shortLink->{
+            GroupDO groupDO = GroupDO.builder()
+                    .sortOrder(shortLink.getSortOrder())
+                    .build();
+
+            LambdaUpdateWrapper<GroupDO> updateWrapper = Wrappers.lambdaUpdate(GroupDO.class)
+                    .eq(GroupDO::getUsername, UserContext.getUsername())
+                    .eq(GroupDO::getGid, shortLink.getGid())
+                    .eq(GroupDO::getDelFlag, DEL_FLAG_0);
+
+            baseMapper.update(groupDO,updateWrapper);
+        });
+    }
+
 
     /**
      * 判断gid是否可用

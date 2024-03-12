@@ -25,6 +25,7 @@ public class UserTransmitFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String username = httpServletRequest.getHeader("username");
         if (StrUtil.isNotBlank(username)) {
+            // TODO (JIA,2024/3/12,18:56)这里只做用户名校验，应该要校验token，后期网关部分优化
             String userId = httpServletRequest.getHeader("userId");
             String realName = httpServletRequest.getHeader("realName");
             UserInfoDTO userInfoDTO = new UserInfoDTO(userId, username, realName);

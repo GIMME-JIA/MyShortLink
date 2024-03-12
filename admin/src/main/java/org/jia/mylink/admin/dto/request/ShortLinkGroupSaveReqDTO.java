@@ -3,7 +3,7 @@ package org.jia.mylink.admin.dto.request;
 import lombok.Data;
 
 /**
- * 短链接创建分组请求实体
+ * 短链接分组创建请求实体
  * @author JIA
  * @version 1.0
  * @since 2024/3/11
