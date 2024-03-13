@@ -1,5 +1,6 @@
 package org.jia.mylink.project.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -79,6 +80,7 @@ public class LinkDO extends BaseDO {
     /**
      * 描述
      */
+    @TableField("`describe`")
     private String describe;
 
 }

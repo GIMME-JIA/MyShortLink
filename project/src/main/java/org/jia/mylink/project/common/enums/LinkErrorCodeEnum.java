@@ -9,8 +9,16 @@ import org.jia.mylink.project.common.convention.errorcode.IErrorCode;
  * @since 2024/3/12
  */
 
-public class LinkErrorCodeEnum implements IErrorCode {
+public enum LinkErrorCodeEnum implements IErrorCode {
 
+
+    /**
+     * 短链接生成频繁
+     */
+    LINK_OUT_OF_MAX_RETRY("B000100","短链接生成频繁"),
+    LINK_IS_DUPLICATE("B000101","短链接已存在")
+
+        ;
 
     private final String code;
 
