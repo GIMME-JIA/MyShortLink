@@ -1,7 +1,9 @@
 package org.jia.mylink.project.service.impl;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.text.StrBuilder;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +11,9 @@ import org.jia.mylink.project.common.convention.exception.ServiceException;
 import org.jia.mylink.project.dao.entity.LinkDO;
 import org.jia.mylink.project.dao.mapper.LinkMapper;
 import org.jia.mylink.project.dto.request.LinkCreateReqDTO;
+import org.jia.mylink.project.dto.request.LinkPageReqDTO;
 import org.jia.mylink.project.dto.response.LinkCreateRespDTO;
+import org.jia.mylink.project.dto.response.LinkPageRespDTO;
 import org.jia.mylink.project.service.LinkService;
 import org.jia.mylink.project.toolkit.HashUtil;
 import org.redisson.api.RBloomFilter;
@@ -18,8 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-import static org.jia.mylink.project.common.constant.ServiceConstant.ENABLE_STATUS_0;
-import static org.jia.mylink.project.common.constant.ServiceConstant.MAX_RETRY;
+import static org.jia.mylink.project.common.constant.ServiceConstant.*;
 import static org.jia.mylink.project.common.enums.LinkErrorCodeEnum.LINK_IS_DUPLICATE;
 import static org.jia.mylink.project.common.enums.LinkErrorCodeEnum.LINK_OUT_OF_MAX_RETRY;
 
@@ -76,6 +79,19 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                 .originUrl(linkDO.getOriginUrl())
                 .fullShortUrl(linkDO.getFullShortUrl())
                 .build();
+    }
+
+    @Override
+    public IPage<LinkPageRespDTO> pageLink(LinkPageReqDTO requestParam) {
+        // TODO (JIA,2024/3/13,21:38) 待修复bug
+        //  LinkMapper.xml中多表查询的sql错误
+        IPage<LinkDO> resultPage = baseMapper.pageLink(requestParam);
+
+        return resultPage.convert(each -> {
+            LinkPageRespDTO result = BeanUtil.toBean(each, LinkPageRespDTO.class);
+            result.setDomain(PROTOCOL_HTTP + result.getDomain());
+            return result;
+        });
     }
 
     /**
