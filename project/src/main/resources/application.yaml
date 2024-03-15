@@ -3,6 +3,11 @@ server:
 
 spring:
 
+  mvc:
+    view:
+      prefix: /templates/
+      suffix: .html
+
   # redis配置
   data:
     redis:
