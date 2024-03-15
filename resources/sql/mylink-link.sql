@@ -1,3 +1,5 @@
+-- 短链接表结构
+
 use mylink_database;
 
 -- 分表前
