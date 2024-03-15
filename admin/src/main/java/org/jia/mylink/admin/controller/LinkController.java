@@ -2,9 +2,11 @@ package org.jia.mylink.admin.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.jia.mylink.admin.common.convention.result.Result;
+import org.jia.mylink.admin.common.convention.result.Results;
 import org.jia.mylink.admin.remote.LinkRemoteService;
 import org.jia.mylink.admin.remote.dto.request.LinkCreateReqDTO;
 import org.jia.mylink.admin.remote.dto.request.LinkPageReqDTO;
+import org.jia.mylink.admin.remote.dto.request.LinkUpdateReqDTO;
 import org.jia.mylink.admin.remote.dto.response.LinkCreateRespDTO;
 import org.jia.mylink.admin.remote.dto.response.LinkPageRespDTO;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 // @RequestMapping(path = "/api/short-link/admin/v1/link")
 public class LinkController {
 
+    // TODO (JIA,2024/3/14,11:57)后续重构为SpringCloud Feign调用
     LinkRemoteService linkRemoteService = new LinkRemoteService(){};
 
     /**
@@ -42,4 +45,16 @@ public class LinkController {
     public Result<IPage<LinkPageRespDTO>> pageLink(LinkPageReqDTO requestParam){
         return linkRemoteService.pageLink(requestParam);
     }
+
+    /**
+     * 修改短链接
+     * @param requestParam 短链接修改请求对象
+     */
+    @PutMapping("/update")
+    public Result<Void> updateLink(@RequestBody LinkUpdateReqDTO requestParam){
+        linkRemoteService.updateLink(requestParam);
+        return Results.success();
+    }
+
+
 }

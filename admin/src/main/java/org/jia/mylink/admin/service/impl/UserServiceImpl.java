@@ -18,6 +18,7 @@ import org.jia.mylink.admin.dto.request.UserRegisterReqDTO;
 import org.jia.mylink.admin.dto.request.UserUpdateReqDTO;
 import org.jia.mylink.admin.dto.response.UserLoginRespDTO;
 import org.jia.mylink.admin.dto.response.UserRespDTO;
+import org.jia.mylink.admin.service.GroupService;
 import org.jia.mylink.admin.service.UserService;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
@@ -30,6 +31,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.jia.mylink.admin.common.constant.RedisCacheConstant.*;
+import static org.jia.mylink.admin.common.constant.ServiceConstant.DEFAULT_GROUP_NAME;
 import static org.jia.mylink.admin.common.constant.ServiceConstant.DEL_FLAG_0;
 import static org.jia.mylink.admin.common.enums.UserErrorCodeEnum.*;
 
@@ -56,6 +58,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
 
     private final StringRedisTemplate stringRedisTemplate;
+
+    private final GroupService groupService;
 
     @Override
     public UserRespDTO getUserbyUserName(String username) {
@@ -98,13 +102,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
                 }
 
                 userRegisterCachePenetrationBloomFilter.add(requestParam.getUsername());
+                groupService.saveGroup(DEFAULT_GROUP_NAME);
             } else {
                 throw new ClientException((USER_SAVE_ERROR));
             }
         } finally {
             lock.unlock();
         }
-
     }
 
     @Override

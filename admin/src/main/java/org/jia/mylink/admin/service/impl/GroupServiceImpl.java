@@ -10,11 +10,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jia.mylink.admin.common.biz.UserContext;
 import org.jia.mylink.admin.common.convention.exception.ClientException;
+import org.jia.mylink.admin.common.convention.result.Result;
 import org.jia.mylink.admin.dao.entity.GroupDO;
 import org.jia.mylink.admin.dao.mapper.GroupMapper;
 import org.jia.mylink.admin.dto.request.ShortLinkGroupSortReqDTO;
 import org.jia.mylink.admin.dto.request.ShortLinkGroupUpdateReqDTO;
 import org.jia.mylink.admin.dto.response.ShortLinkGroupListRespDTO;
+import org.jia.mylink.admin.remote.LinkRemoteService;
+import org.jia.mylink.admin.remote.dto.response.LinkGroupCountQueryRespDTO;
 import org.jia.mylink.admin.service.GroupService;
 import org.jia.mylink.admin.toolkit.RandomGenerator;
 import org.redisson.api.RLock;
@@ -22,6 +25,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.jia.mylink.admin.common.constant.RedisCacheConstant.LOCK_GROUP_CREATE_KEY;
@@ -41,8 +45,12 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
 
     private final RedissonClient redissonClient;
 
+    // TODO (JIA,2024/3/14,11:57)后续重构为SpringCloud Feign调用
+    LinkRemoteService linkRemoteService = new LinkRemoteService(){};
+
     @Override
     public void saveGroup(String groupName) {
+        // TODO (JIA,2024/3/14,12:21) 此处获取的用户名为空
         saveGroup(UserContext.getUsername(),groupName);
     }
 
@@ -88,10 +96,20 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
                 .eq(GroupDO::getDelFlag, DEL_FLAG_0)
                 .eq(GroupDO::getUsername, UserContext.getUsername())
                 .orderByDesc(GroupDO::getSortOrder, GroupDO::getUpdateTime);
-
         List<GroupDO> groupDOList = baseMapper.selectList(queryWrapper);
 
-        return BeanUtil.copyToList(groupDOList, ShortLinkGroupListRespDTO.class);
+        Result<List<LinkGroupCountQueryRespDTO>> listResult = linkRemoteService
+                .listGroupLinkCount(groupDOList.stream().map(GroupDO::getGid).toList());
+
+        List<ShortLinkGroupListRespDTO> shortLinkGroupListRespDTOList = BeanUtil.copyToList(groupDOList, ShortLinkGroupListRespDTO.class);
+
+        shortLinkGroupListRespDTOList.forEach(each -> {
+            Optional<LinkGroupCountQueryRespDTO> first = listResult.getData().stream()
+                    .filter(item -> Objects.equals(item.getGid(), each.getGid()))
+                    .findFirst();
+            first.ifPresent(item->each.setShortLinkCount(first.get().getShortLinkCount()));
+        });
+        return shortLinkGroupListRespDTOList;
     }
 
     @Override

@@ -1,15 +1,21 @@
 package org.jia.mylink.project.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.jia.mylink.project.common.convention.result.Result;
 import org.jia.mylink.project.common.convention.result.Results;
 import org.jia.mylink.project.dto.request.LinkCreateReqDTO;
 import org.jia.mylink.project.dto.request.LinkPageReqDTO;
+import org.jia.mylink.project.dto.request.LinkUpdateReqDTO;
 import org.jia.mylink.project.dto.response.LinkCreateRespDTO;
+import org.jia.mylink.project.dto.response.LinkGroupCountQueryRespDTO;
 import org.jia.mylink.project.dto.response.LinkPageRespDTO;
 import org.jia.mylink.project.service.LinkService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 短链接管理控制层
@@ -22,7 +28,15 @@ import org.springframework.web.bind.annotation.*;
 // @RequestMapping(path = "/api/short-link/admin/v1/link")
 @RequiredArgsConstructor
 public class LinkController {
+
     private final LinkService linkService;
+
+
+    @GetMapping("/{short-uri}")
+    public void restoreUrl(@PathVariable("short-uri") String shortUri, ServletRequest request, ServletResponse response){
+
+        linkService.restoreUrl(shortUri,request,response);
+    }
 
     /**
      * 创建短链接
@@ -43,6 +57,28 @@ public class LinkController {
     public Result<IPage<LinkPageRespDTO>> pageLink(LinkPageReqDTO requestParam){
         return Results.success(linkService.pageLink(requestParam));
     }
+
+    /**
+     * 查询短链接分组内的数量
+     * @param requestParam 短链接分组id集合
+     * @return 短链接分组查询响应对象
+     */
+    @GetMapping("/count")
+    public Result<List<LinkGroupCountQueryRespDTO>> listGroupLinkCount(@RequestParam("requestParam") List<String> requestParam){
+        return Results.success(linkService.listGroupLinkCount(requestParam));
+    }
+
+    /**
+     * 修改短链接
+     * @param requestParam 短链接修改请求对象
+     */
+    @PostMapping("/update")
+    public Result<Void> updateLink(@RequestBody LinkUpdateReqDTO requestParam){
+        linkService.updateLink(requestParam);
+        return Results.success();
+    }
+
+
 
 
 
