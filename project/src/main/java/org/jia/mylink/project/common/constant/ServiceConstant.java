@@ -16,5 +16,30 @@ public class ServiceConstant {
     public static final Integer DEL_FLAG_1 = 1;
 
     public static final Integer ENABLE_STATUS_0 = 0;
+
+    /**
+     * http协议
+     */
     public static final String PROTOCOL_HTTP = "http://";
+
+    /**
+     * 重定向页面路径
+     */
+    public static final String PATH_NOT_FOUND = "/page/notfound";
+
+
+    /**
+     * 80端口
+     */
+    public static final Integer PORT_80 = 80;
+
+    /**
+     * cookie最大过期时间
+     */
+    public static final Integer COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
+
+    /**
+     * cookie名称
+     */
+    public static final String COOKIE_NAME = "uv";
 }
