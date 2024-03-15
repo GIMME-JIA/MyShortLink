@@ -12,6 +12,7 @@ public class ServiceConstant {
     public static final Integer MAX_RETRY = 10;
 
     public static final Integer DEL_FLAG_0 = 0;
+    public static final Long DEL_TIME_0L = 0L;
     public static final Integer DEL_FLAG_1 = 1;
 
     public static final Integer ENABLE_STATUS_0 = 0;
