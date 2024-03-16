@@ -42,4 +42,14 @@ public class ServiceConstant {
      * cookie名称
      */
     public static final String COOKIE_NAME = "uv";
+
+    /**
+     * 标题获取失败
+     */
+    public static final String TITTLE_FETCH_ERROR = "Error while fetching title.";
+
+    /**
+     * GET请求
+     */
+    public static final String REQUEST_GET = "GET";
 }

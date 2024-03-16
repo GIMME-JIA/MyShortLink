@@ -25,6 +25,7 @@ import java.util.Map;
  */
 
 public interface LinkRemoteService {
+    // TODO (JIA,2024/3/16,12:01)透传服务模块后期需要补充优化
 
     /**
      * 分页查询短链接
