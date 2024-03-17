@@ -16,7 +16,7 @@ public class ServiceConstant {
     public static final Integer DEL_FLAG_1 = 1;
 
     public static final Integer ENABLE_STATUS_0 = 0;
-    public static final Integer ENABLE_STATUS_1 = 1;
+    public static final Integer ENABLE_STATUS_1 = 1;;
 
     /**
      * http协议

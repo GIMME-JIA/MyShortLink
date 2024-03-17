@@ -9,7 +9,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.jia.mylink.project.dao.entity.LinkDO;
 import org.jia.mylink.project.dao.mapper.LinkMapper;
-import org.jia.mylink.project.dto.request.LinkRecycleBinPageReqDTO;
+import org.jia.mylink.project.dto.request.RecycleBinPageReqDTO;
+import org.jia.mylink.project.dto.request.RecycleBinRecoverReqDTO;
+import org.jia.mylink.project.dto.request.RecycleBinRemoveReqDTO;
 import org.jia.mylink.project.dto.request.RecycleBinSaveReqDTO;
 import org.jia.mylink.project.dto.response.LinkPageRespDTO;
 import org.jia.mylink.project.service.RecycleBinService;
@@ -29,6 +31,7 @@ import static org.jia.mylink.project.common.constant.ServiceConstant.*;
 @Service
 @RequiredArgsConstructor
 public class RecycleBinServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements RecycleBinService {
+
     private final StringRedisTemplate stringRedisTemplate;
 
     @Override
@@ -50,20 +53,55 @@ public class RecycleBinServiceImpl extends ServiceImpl<LinkMapper, LinkDO> imple
     }
 
     @Override
-    public IPage<LinkPageRespDTO> pageLink(LinkRecycleBinPageReqDTO requestParam) {
+    public IPage<LinkPageRespDTO> pageLink(RecycleBinPageReqDTO requestParam) {
         LambdaQueryWrapper<LinkDO> queryWrapper = Wrappers.lambdaQuery(LinkDO.class)
                 .in(LinkDO::getGid, requestParam.getGidList())
                 .eq(LinkDO::getEnableStatus, ENABLE_STATUS_1)
                 .eq(LinkDO::getDelFlag, DEL_FLAG_0)
                 .orderByDesc(LinkDO::getUpdateTime);
 
-        IPage<LinkDO> resultPage = baseMapper.selectPage(requestParam,queryWrapper);
+        IPage<LinkDO> resultPage = baseMapper.selectPage(requestParam, queryWrapper);
 
         return resultPage.convert(each -> {
             LinkPageRespDTO result = BeanUtil.toBean(each, LinkPageRespDTO.class);
             result.setDomain(PROTOCOL_HTTP + result.getDomain());
             return result;
         });
+    }
+
+    @Override
+    public void recoverRecycleBin(RecycleBinRecoverReqDTO requestParam) {
+        LambdaUpdateWrapper<LinkDO> updateWrapper = Wrappers.lambdaUpdate(LinkDO.class)
+                .eq(LinkDO::getFullShortUrl, requestParam.getFullShortUrl())
+                .eq(LinkDO::getGid, requestParam.getGid())
+                .eq(LinkDO::getEnableStatus, ENABLE_STATUS_1)
+                .eq(LinkDO::getDelTime, DEL_TIME_0L)
+                .eq(LinkDO::getDelFlag, DEL_FLAG_0);
+
+        LinkDO delLinkDO = LinkDO.builder()
+                .delTime(System.currentTimeMillis())
+                .build();
+
+        delLinkDO.setDelFlag(DEL_FLAG_1);
+
+        baseMapper.update(delLinkDO, updateWrapper);
+    }
+
+    @Override
+    public void removeRecycleBin(RecycleBinRemoveReqDTO requestParam) {
+        LambdaUpdateWrapper<LinkDO> updateWrapper = Wrappers.lambdaUpdate(LinkDO.class)
+                .eq(LinkDO::getFullShortUrl, requestParam.getFullShortUrl())
+                .eq(LinkDO::getGid, requestParam.getGid())
+                .eq(LinkDO::getEnableStatus, ENABLE_STATUS_1)
+                .eq(LinkDO::getDelTime, DEL_TIME_0L)
+                .eq(LinkDO::getDelFlag, DEL_FLAG_0);
+
+        LinkDO delLinkDO = LinkDO.builder()
+                .delTime(System.currentTimeMillis())
+                .build();
+        delLinkDO.setDelFlag(DEL_FLAG_1);
+
+        baseMapper.update(delLinkDO,updateWrapper);
     }
 
 }

@@ -12,7 +12,10 @@ import org.jia.mylink.admin.common.convention.errorcode.IErrorCode;
 
 public enum GroupErrorCodeEnum implements IErrorCode {
 
-
+    /**
+     * 该用户无分组信息
+     */
+    GROUP_NULL("B000100", "该用户无分组信息")
 
     ;
 

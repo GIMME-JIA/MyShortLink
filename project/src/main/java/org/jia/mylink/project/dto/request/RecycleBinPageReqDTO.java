@@ -13,7 +13,7 @@ import java.util.List;
  * @since 2024/3/17
  */
 @Data
-public class LinkRecycleBinPageReqDTO extends Page<LinkDO> {
+public class RecycleBinPageReqDTO extends Page<LinkDO> {
     /**
      * 分组标识
      */

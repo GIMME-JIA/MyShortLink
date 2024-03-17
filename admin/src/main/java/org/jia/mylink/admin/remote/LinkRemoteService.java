@@ -8,6 +8,7 @@ import org.jia.mylink.admin.common.convention.result.Result;
 import org.jia.mylink.admin.remote.dto.request.LinkCreateReqDTO;
 import org.jia.mylink.admin.remote.dto.request.LinkPageReqDTO;
 import org.jia.mylink.admin.remote.dto.request.LinkUpdateReqDTO;
+import org.jia.mylink.admin.remote.dto.request.RecycleBinSaveReqDTO;
 import org.jia.mylink.admin.remote.dto.response.LinkCreateRespDTO;
 import org.jia.mylink.admin.remote.dto.response.LinkGroupCountQueryRespDTO;
 import org.jia.mylink.admin.remote.dto.response.LinkPageRespDTO;
@@ -80,5 +81,18 @@ public interface LinkRemoteService {
      */
     default void updateLink(LinkUpdateReqDTO requestParam) {
         HttpUtil.post("http://127.0.0.1:8001/api/short-link/admin/v1/update", JSON.toJSONString(requestParam));
+    }
+
+    /**
+     * 短链接移至回收站
+     * @param requestParam 短链接移至回收站请求对象
+     */
+    default void moveToRecycleBin(RecycleBinSaveReqDTO requestParam){
+
+    }
+
+    // TODO (JIA,2024/3/17,11:27) pageRecycleBinLink待重构
+    default IPage<LinkPageRespDTO> pageRecycleBinLink(List<String> gidList, long current, long size){
+        return null;
     }
 }
