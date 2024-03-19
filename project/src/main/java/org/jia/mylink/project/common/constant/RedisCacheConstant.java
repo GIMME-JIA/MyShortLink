@@ -54,6 +54,11 @@ public class RedisCacheConstant {
     public static final String SHORT_LINK_STATS_STREAM_GROUP_KEY = "short-link:stats-stream:only-group";
 
     /**
+     * 创建短链接锁标识
+     */
+    public static final String SHORT_LINK_CREATE_LOCK_KEY = "short-link:lock:create";
+
+    /**
      * 时间量30
      */
     public static final Long TIME_OUT_30L = 30L;

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "/api/short-link/v1")
 // @RequestMapping(path = "/api/short-link/admin/v1/link")
-public class LinkController {
+public class ShortLinkController {
 
     // TODO (JIA,2024/3/14,11:57)后续重构为SpringCloud Feign调用
     LinkRemoteService linkRemoteService = new LinkRemoteService(){};

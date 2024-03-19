@@ -6,9 +6,11 @@ import jakarta.servlet.ServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.jia.mylink.project.common.convention.result.Result;
 import org.jia.mylink.project.common.convention.result.Results;
+import org.jia.mylink.project.dto.request.LinkBatchCreateReqDTO;
 import org.jia.mylink.project.dto.request.LinkCreateReqDTO;
 import org.jia.mylink.project.dto.request.LinkPageReqDTO;
 import org.jia.mylink.project.dto.request.LinkUpdateReqDTO;
+import org.jia.mylink.project.dto.response.LinkBatchCreateRespDTO;
 import org.jia.mylink.project.dto.response.LinkCreateRespDTO;
 import org.jia.mylink.project.dto.response.LinkGroupCountQueryRespDTO;
 import org.jia.mylink.project.dto.response.LinkPageRespDTO;
@@ -25,10 +27,10 @@ import java.util.List;
  * @since 2024/3/12
  */
 @RestController
-@RequestMapping(path = "/api/short-link/admin/v1")
-// @RequestMapping(path = "/api/short-link/admin/v1/link")
+@RequestMapping(path = "/api/short-link/v1")
+// @RequestMapping(path = "/api/short-link/admin/v1")
 @RequiredArgsConstructor
-public class LinkController {
+public class ShortLinkController {
 
     private final LinkService linkService;
 
@@ -55,6 +57,28 @@ public class LinkController {
     @PostMapping("/create")
     public Result<LinkCreateRespDTO> createLink(@RequestBody LinkCreateReqDTO requestParam) {
         return Results.success(linkService.createLink(requestParam));
+    }
+
+    /**
+     * 根据分布式锁创建短链接
+     *
+     * @param requestParam 短链接创建请求对象
+     * @return 短链接创建响应对象
+     */
+    @PostMapping("/create/by-lock")
+    public Result<LinkCreateRespDTO> createShortLinkByLock(@RequestBody LinkCreateReqDTO requestParam) {
+        return Results.success(linkService.createShortLinkByLock(requestParam));
+    }
+
+    /**
+     * 批量创建短链接
+     *
+     * @param requestParam 批量创建短链接请求对象
+     * @return 批量创建短链接响应对象
+     */
+    @PostMapping("/create/batch")
+    public Result<LinkBatchCreateRespDTO> batchCreateShortLink(@RequestBody LinkBatchCreateReqDTO requestParam) {
+        return Results.success(linkService.batchCreateShortLink(requestParam));
     }
 
     /**

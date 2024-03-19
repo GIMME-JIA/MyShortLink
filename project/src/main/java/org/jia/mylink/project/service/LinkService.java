@@ -6,9 +6,11 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import org.jia.mylink.project.dao.entity.LinkDO;
 import org.jia.mylink.project.dto.biz.LinkStatsRecordDTO;
+import org.jia.mylink.project.dto.request.LinkBatchCreateReqDTO;
 import org.jia.mylink.project.dto.request.LinkCreateReqDTO;
 import org.jia.mylink.project.dto.request.LinkPageReqDTO;
 import org.jia.mylink.project.dto.request.LinkUpdateReqDTO;
+import org.jia.mylink.project.dto.response.LinkBatchCreateRespDTO;
 import org.jia.mylink.project.dto.response.LinkCreateRespDTO;
 import org.jia.mylink.project.dto.response.LinkGroupCountQueryRespDTO;
 import org.jia.mylink.project.dto.response.LinkPageRespDTO;
@@ -32,6 +34,22 @@ public interface LinkService extends IService<LinkDO> {
      * @return 短链接创建响应对象
      */
     LinkCreateRespDTO createLink(LinkCreateReqDTO requestParam);
+
+    /**
+     * 根据分布式锁创建短链接
+     *
+     * @param requestParam 短链接创建请求对象
+     * @return 短链接创建响应对象
+     */
+    LinkCreateRespDTO createShortLinkByLock(LinkCreateReqDTO requestParam);
+
+    /**
+     * 批量创建短链接
+     *
+     * @param requestParam 批量创建短链接请求对象
+     * @return 批量创建短链接响应对象
+     */
+    LinkBatchCreateRespDTO batchCreateShortLink(LinkBatchCreateReqDTO requestParam);
 
     /**
      * 分页查询短链接
