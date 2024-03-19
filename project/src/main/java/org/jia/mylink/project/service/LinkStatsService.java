@@ -22,7 +22,7 @@ public interface LinkStatsService {
      * @param requestParam
      * @return 访问短链接监控响应对象
      */
-    LinkStatsRespDTO oneLinkStats(LinkStatsReqDTO requestParam);
+    LinkStatsRespDTO oneShortLinkStats(LinkStatsReqDTO requestParam);
 
     /**
      * 获取分组短链接监控数据
@@ -30,7 +30,7 @@ public interface LinkStatsService {
      * @param requestParam
      * @return 访问短链接监控响应对象
      */
-    LinkStatsRespDTO groupLinkStats(LinkGroupStatsReqDTO requestParam);
+    LinkStatsRespDTO groupShortLinkStats(LinkGroupStatsReqDTO requestParam);
 
     /**
      * 访问单个短链接指定时间内访问记录监控数据
@@ -46,6 +46,6 @@ public interface LinkStatsService {
      * @param requestParam
      * @return 访问短链接监控记录响应对象
      */
-    IPage<LinkStatsAccessRecordRespDTO> groupLinkStatsAccessRecord(LinkGroupStatsAccessRecordReqDTO requestParam);
+    IPage<LinkStatsAccessRecordRespDTO> groupShortLinkStatsAccessRecord(LinkGroupStatsAccessRecordReqDTO requestParam);
 
 }
