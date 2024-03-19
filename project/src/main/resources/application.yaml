@@ -22,3 +22,21 @@ spring:
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
     # ShardingSphere 配置文件路径
     url: jdbc:shardingsphere:classpath:shardingsphere-config-${database.env:dev}.yaml
+
+short-link:
+  domain:
+    default: nurl.ink:8001
+  stats:
+    locale:
+      amap-key: 0c9f48b986f7729f42b0695dd33fac57
+
+  goto-domain:
+    # 域名白名单
+    white-list:
+      enable: true
+      names: '知乎,掘金,博客园,CSDN'
+      details:
+        - zhihu.com
+        - juejin.cn
+        - cnblogs.com
+        - csdn.net
