@@ -18,16 +18,16 @@
 package org.jia.mylink.project.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.nageoffer.shortlink.project.common.database.BaseDO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jia.mylink.project.dao.base.BaseDO;
 
 import java.util.Date;
 
 /**
- * 访问网络统计访问实体
+ * 访问网络统计持久层实体
  * 
  */
 @Data

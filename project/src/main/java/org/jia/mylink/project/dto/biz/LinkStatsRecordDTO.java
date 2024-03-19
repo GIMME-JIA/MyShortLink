@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 短链接统计实体
+ * 短链接统计服务层对象
  * @author JIA
  * @version 1.0
  * @since 2024/3/15

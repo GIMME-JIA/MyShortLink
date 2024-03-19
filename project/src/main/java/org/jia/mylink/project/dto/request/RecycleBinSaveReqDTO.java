@@ -3,7 +3,7 @@ package org.jia.mylink.project.dto.request;
 import lombok.Data;
 
 /**
- * 短链接移至回收站请求对象
+ * 回收站新增请求对象
  * @author JIA
  * @version 1.0
  * @since 2024/3/17
