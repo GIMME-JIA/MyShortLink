@@ -1,6 +1,7 @@
 package org.jia.mylink.admin.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -24,9 +25,11 @@ import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -90,22 +93,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
             throw new ClientException(USER_NAME_EXIST);
         }
 
-        RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY + username);     // 只有相同用户名才会获取同一把锁
+        RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY + username);
 
         try {
             if (lock.tryLock()) {
-                UserDO userDO = BeanUtil.toBean(requestParam, UserDO.class);
-                int inserted = baseMapper.insert(userDO);
+                try {
+                    UserDO userDO = BeanUtil.toBean(requestParam, UserDO.class);
+                    int inserted = baseMapper.insert(userDO);
 
-                if (inserted < 1) {
-                    throw new ClientException((USER_SAVE_ERROR));
+                    if (inserted < 1) {
+                        throw new ClientException((USER_SAVE_ERROR));
+                    }
+                } catch (DuplicateKeyException ex) {
+                    throw new ClientException(USER_EXIST);
                 }
 
                 userRegisterCachePenetrationBloomFilter.add(requestParam.getUsername());
                 groupService.saveGroup(DEFAULT_GROUP_NAME);
+
             } else {
                 throw new ClientException((USER_SAVE_ERROR));
             }
+
         } finally {
             lock.unlock();
         }
@@ -132,13 +141,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         UserDO userDO = baseMapper.selectOne(queryWrapper);
 
         if (userDO == null) {
-            throw new ClientException(USER_LOGIN_ERROR);
+            throw new ClientException(USER_NAME_OR_PASSWORD_ERROR);
         }
 
 
-        Boolean hasLogin = stringRedisTemplate.hasKey(key);
-        if (hasLogin != null && hasLogin) {
-            throw new ClientException(USER_HAS_LOGIN);
+        Map<Object, Object> hasLoginMap = stringRedisTemplate.opsForHash().entries(key);
+        if (CollUtil.isNotEmpty(hasLoginMap)) {
+            stringRedisTemplate.expire(key, TIME_OUT_30, TimeUnit.MINUTES);
+            String token = hasLoginMap.keySet().stream()
+                    .findFirst()
+                    .map(Object::toString)
+                    .orElseThrow(() -> new ClientException(USER_LOGIN_ERROR));
+            return new UserLoginRespDTO(token);
         }
 
         /*
@@ -149,11 +163,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
          *  val：json字符串（用户信息）
          */
 
-        String token = UUID.randomUUID().toString();
-        stringRedisTemplate.opsForHash().put(key, token, JSON.toJSONString(userDO));
-        stringRedisTemplate.expire(key, TIME_OUT_30, TimeUnit.DAYS);
+        String uuid = UUID.randomUUID().toString();
+        stringRedisTemplate.opsForHash().put(key, uuid, JSON.toJSONString(userDO));
+        stringRedisTemplate.expire(key, TIME_OUT_30, TimeUnit.MINUTES);
 
-        return new UserLoginRespDTO(token);
+        return new UserLoginRespDTO(uuid);
 
     }
 

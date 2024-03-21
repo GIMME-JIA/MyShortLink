@@ -41,7 +41,8 @@ public enum UserErrorCodeEnum implements IErrorCode {
     /**
      * 账号或密码错误
      */
-    USER_LOGIN_ERROR("A000208", "账号或密码错误"),
+    USER_NAME_OR_PASSWORD_ERROR("A000208", "账号或密码错误"),
+    USER_LOGIN_ERROR("A000209", "用户登录异常"),
 
     /**
      * 用户已登录
