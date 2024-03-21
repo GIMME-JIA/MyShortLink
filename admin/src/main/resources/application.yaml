@@ -39,4 +39,4 @@ short-link:
   flow-limit:
     enable: true
     time-window: 1
-    max-access-count: 20
+    max-access-count: 20  # 流量风控最大qps
