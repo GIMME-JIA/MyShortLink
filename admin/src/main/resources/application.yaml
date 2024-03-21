@@ -2,6 +2,8 @@ server:
   port: 8002
 
 spring:
+  application:
+    name: mylink-admin
 
 # redis配置
   data:
@@ -30,3 +32,11 @@ spring:
 #      maximum-pool-size: 5
 #      minimum-idle: 5
 
+short-link:
+  group:
+    max-num: 20   # 创建分组最大数量
+
+  flow-limit:
+    enable: true
+    time-window: 1
+    max-access-count: 20

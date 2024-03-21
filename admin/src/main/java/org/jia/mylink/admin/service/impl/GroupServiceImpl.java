@@ -22,6 +22,7 @@ import org.jia.mylink.admin.service.GroupService;
 import org.jia.mylink.admin.toolkit.RandomGenerator;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,6 +49,9 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
     // TODO (JIA,2024/3/14,11:57)后续重构为SpringCloud Feign调用
     LinkRemoteService linkRemoteService = new LinkRemoteService(){};
 
+    @Value("${short-link.group.max-num}")
+    private Integer groupMaxNum;
+
     @Override
     public void saveGroup(String groupName) {
         // TODO (JIA,2024/3/14,12:21) 此处获取的用户名为空
@@ -66,8 +70,8 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
                     .eq(GroupDO::getDelFlag, DEL_FLAG_0);
             List<GroupDO> groupDOList = baseMapper.selectList(queryWrapper);
 
-            if(CollUtil.isNotEmpty(groupDOList) && groupDOList.size() == GROUP_MAX_NUMBER){
-                throw new ClientException(String.format(OUT_OF_GROUP_MAX_NUM,GROUP_MAX_NUMBER));
+            if(CollUtil.isNotEmpty(groupDOList) && groupDOList.size() == groupMaxNum){
+                throw new ClientException(String.format(OUT_OF_GROUP_MAX_NUM,groupMaxNum));
             }
 
             String gid;
@@ -91,7 +95,6 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
 
     @Override
     public List<ShortLinkGroupListRespDTO> listGroup() {
-        // TODO (JIA,2024/3/12,11:55) 查询短链接分组集合服务层功能待优化
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getDelFlag, DEL_FLAG_0)
                 .eq(GroupDO::getUsername, UserContext.getUsername())
@@ -109,6 +112,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
                     .findFirst();
             first.ifPresent(item->each.setShortLinkCount(first.get().getShortLinkCount()));
         });
+
         return shortLinkGroupListRespDTOList;
     }
 

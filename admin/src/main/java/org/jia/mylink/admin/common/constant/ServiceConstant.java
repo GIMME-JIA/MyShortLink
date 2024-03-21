@@ -9,7 +9,6 @@ package org.jia.mylink.admin.common.constant;
 
 public class ServiceConstant {
 
-    public static final Integer GROUP_MAX_NUMBER = 20;
 
     public static final String OUT_OF_GROUP_MAX_NUM = "已超出最大分组数:%d";
     public static final String DEFAULT_GROUP_NAME = "默认分组";
