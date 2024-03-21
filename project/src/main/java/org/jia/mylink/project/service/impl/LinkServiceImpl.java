@@ -34,6 +34,7 @@ import org.jia.mylink.project.dto.request.LinkCreateReqDTO;
 import org.jia.mylink.project.dto.request.LinkPageReqDTO;
 import org.jia.mylink.project.dto.request.LinkUpdateReqDTO;
 import org.jia.mylink.project.dto.response.*;
+import org.jia.mylink.project.mq.producer.ShortLinkStatsSaveProducer;
 import org.jia.mylink.project.service.LinkService;
 import org.jia.mylink.project.service.LinkStatsTodayService;
 import org.jia.mylink.project.toolkit.HashUtil;
@@ -105,7 +106,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
 
     private final LinkStatsTodayService linkStatsTodayService;
 
-    /*private final ShortLinkStatsSaveProducer shortLinkStatsSaveProducer;*/
+    private final ShortLinkStatsSaveProducer shortLinkStatsSaveProducer;
 
 
     @Value("${short-link.domain.default}")
@@ -462,7 +463,6 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     @SneakyThrows
     @Override
     public void restoreUrl(String shortUri, ServletRequest request, ServletResponse response) {
-        // TODO (JIA,2024/3/15,19:20)  restoreUrl已完成但没看懂
         // 短链接接口的并发量有多少？如何测试？详情查看：https://nageoffer.com/shortlink/question
         // 面试中如何回答短链接是如何跳转长链接？详情查看：https://nageoffer.com/shortlink/question
         String serverName = request.getServerName();
@@ -548,13 +548,12 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
 
     @Override
     public void shortLinkStats(String fullShortUrl, String gid, LinkStatsRecordDTO shortLinkStatsRecord) {
-        // TODO (JIA,2024/3/15,20:32) 短链接统计功能待优化
         Map<String, String> producerMap = new HashMap<>();
         producerMap.put("fullShortUrl", fullShortUrl);
         producerMap.put("gid", gid);
         producerMap.put("statsRecord", JSON.toJSONString(shortLinkStatsRecord));
         // 消息队列为什么选用RocketMQ？详情查看：https://nageoffer.com/shortlink/question
-        // shortLinkStatsSaveProducer.send(producerMap);
+        shortLinkStatsSaveProducer.send(producerMap);
     }
 
 
