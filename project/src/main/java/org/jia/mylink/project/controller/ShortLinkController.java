@@ -1,5 +1,6 @@
 package org.jia.mylink.project.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -14,6 +15,7 @@ import org.jia.mylink.project.dto.response.LinkBatchCreateRespDTO;
 import org.jia.mylink.project.dto.response.LinkCreateRespDTO;
 import org.jia.mylink.project.dto.response.LinkGroupCountQueryRespDTO;
 import org.jia.mylink.project.dto.response.LinkPageRespDTO;
+import org.jia.mylink.project.handler.CustomBlockHandler;
 import org.jia.mylink.project.service.LinkService;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,6 +57,11 @@ public class ShortLinkController {
      * @return 短链接创建响应对象
      */
     @PostMapping("/create")
+    @SentinelResource(
+            value = "create_short-link",
+            blockHandler = "createShortLinkBlockHandlerMethod",
+            blockHandlerClass = CustomBlockHandler.class
+    )
     public Result<LinkCreateRespDTO> createLink(@RequestBody LinkCreateReqDTO requestParam) {
         return Results.success(linkService.createLink(requestParam));
     }
