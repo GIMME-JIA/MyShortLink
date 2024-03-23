@@ -8,7 +8,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 消息队列幂等处理器
+ * 消息队列幂等处理器:
+ * TODO (JIA,2024/3/22,21:40)后续二刷消息队列重复消费问题如何解决（上）（下）
  * @author JIA
  * @version 1.0
  * @since 2024/3/20
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 public class MessageQueueIdempotentHandler {
+
     private final StringRedisTemplate stringRedisTemplate;
 
     private static final String IDEMPOTENT_KEY_PREFIX = "short-link:idempotent:";
