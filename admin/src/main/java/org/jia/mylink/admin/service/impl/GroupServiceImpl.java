@@ -16,7 +16,7 @@ import org.jia.mylink.admin.dao.mapper.GroupMapper;
 import org.jia.mylink.admin.dto.request.ShortLinkGroupSortReqDTO;
 import org.jia.mylink.admin.dto.request.ShortLinkGroupUpdateReqDTO;
 import org.jia.mylink.admin.dto.response.ShortLinkGroupListRespDTO;
-import org.jia.mylink.admin.remote.LinkRemoteService;
+import org.jia.mylink.admin.remote.ShortLinkActualRemoteService;
 import org.jia.mylink.admin.remote.dto.response.LinkGroupCountQueryRespDTO;
 import org.jia.mylink.admin.service.GroupService;
 import org.jia.mylink.admin.toolkit.RandomGenerator;
@@ -44,10 +44,9 @@ import static org.jia.mylink.admin.common.constant.ServiceConstant.*;
 @RequiredArgsConstructor
 public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implements GroupService {
 
-    private final RedissonClient redissonClient;
+    private final ShortLinkActualRemoteService shortLinkActualRemoteService;
 
-    // TODO (JIA,2024/3/14,11:57)后续重构为SpringCloud Feign调用
-    LinkRemoteService linkRemoteService = new LinkRemoteService(){};
+    private final RedissonClient redissonClient;
 
     @Value("${short-link.group.max-num}")
     private Integer groupMaxNum;
@@ -101,8 +100,8 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
                 .orderByDesc(GroupDO::getSortOrder, GroupDO::getUpdateTime);
         List<GroupDO> groupDOList = baseMapper.selectList(queryWrapper);
 
-        Result<List<LinkGroupCountQueryRespDTO>> listResult = linkRemoteService
-                .listGroupLinkCount(groupDOList.stream().map(GroupDO::getGid).toList());
+        Result<List<LinkGroupCountQueryRespDTO>> listResult = shortLinkActualRemoteService
+                .listGroupShortLinkCount(groupDOList.stream().map(GroupDO::getGid).toList());
 
         List<ShortLinkGroupListRespDTO> shortLinkGroupListRespDTOList = BeanUtil.copyToList(groupDOList, ShortLinkGroupListRespDTO.class);
 
