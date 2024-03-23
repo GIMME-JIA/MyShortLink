@@ -5,7 +5,12 @@ spring:
   application:
     name: mylink-admin
 
-# redis配置
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+  # redis配置
   data:
     redis:
       host: 127.0.0.1

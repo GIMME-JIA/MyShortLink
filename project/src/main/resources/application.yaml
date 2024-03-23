@@ -3,12 +3,17 @@ server:
 
 spring:
   application:
-    name: short-link-project
+    name: mylink-project
 
   mvc:
     view:
       prefix: /templates/
       suffix: .html
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
 
   # redis配置
   data:
