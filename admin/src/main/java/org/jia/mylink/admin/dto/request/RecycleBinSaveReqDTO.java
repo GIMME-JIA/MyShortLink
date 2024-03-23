@@ -1,15 +1,17 @@
-package org.jia.mylink.admin.remote.dto.request;
+package org.jia.mylink.admin.dto.request;
 
 import lombok.Data;
 
 /**
- * 短链接移至回收站请求对象
+ * 回收站短链接保存请求对象
  * @author JIA
  * @version 1.0
- * @since 2024/3/17
+ * @since 2024/3/23
  */
+
 @Data
 public class RecycleBinSaveReqDTO {
+
     /**
      * 分组标识
      */
@@ -20,3 +22,4 @@ public class RecycleBinSaveReqDTO {
      */
     private String fullShortUrl;
 }
+

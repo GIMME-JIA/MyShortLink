@@ -1,12 +1,15 @@
 package org.jia.mylink.admin.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.jia.mylink.admin.common.convention.result.Result;
 import org.jia.mylink.admin.common.convention.result.Results;
-import org.jia.mylink.admin.remote.LinkRemoteService;
+import org.jia.mylink.admin.dto.request.RecycleBinRecoverReqDTO;
+import org.jia.mylink.admin.dto.request.RecycleBinRemoveReqDTO;
+import org.jia.mylink.admin.dto.request.RecycleBinSaveReqDTO;
+import org.jia.mylink.admin.remote.ShortLinkActualRemoteService;
 import org.jia.mylink.admin.remote.dto.request.RecycleBinPageReqDTO;
-import org.jia.mylink.admin.remote.dto.request.RecycleBinSaveReqDTO;
 import org.jia.mylink.admin.remote.dto.response.LinkPageRespDTO;
 import org.jia.mylink.admin.service.RecycleBinService;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class RecycleBinController {
 
-    // TODO (JIA,2024/3/14,11:57)后续重构为SpringCloud Feign调用
-    LinkRemoteService linkRemoteService = new LinkRemoteService(){};
+    private final ShortLinkActualRemoteService shortLinkActualRemoteService;
 
     private final RecycleBinService recycleBinService;
 
@@ -35,20 +37,38 @@ public class RecycleBinController {
      */
     @PostMapping("/save")
     public Result<Void> moveToRecycleBin(@RequestBody RecycleBinSaveReqDTO requestParam) {
-        linkRemoteService.moveToRecycleBin(requestParam);
+        shortLinkActualRemoteService.saveRecycleBin(requestParam);
         return Results.success();
     }
 
     /**
      * 分页查询回收站短链接
      *
-     * @param requestParam 回收站分页查询请求对象
+     * @param requestParam 回收站短链接分页请求对象
      * @return 短链接分页查询响应对象
      */
     @GetMapping("/page")
-    public Result<IPage<LinkPageRespDTO>> pageShortLink(RecycleBinPageReqDTO requestParam) {
-        return Results.success(recycleBinService.pageLink(requestParam));
+    public Result<Page<LinkPageRespDTO>> pageShortLink(RecycleBinPageReqDTO requestParam) {
+        return recycleBinService.pageLink(requestParam);
     }
 
+    /**
+     * 恢复短链接
+     * @param requestParam 回收站短链接恢复请求对象
+     */
+    @PostMapping("/recover")
+    public Result<Void> recoverRecycleBin(@RequestBody RecycleBinRecoverReqDTO requestParam) {
+        shortLinkActualRemoteService.recoverRecycleBin(requestParam);
+        return Results.success();
+    }
+
+    /**
+     * 移除短链接
+     */
+    @PostMapping("/remove")
+    public Result<Void> removeRecycleBin(@RequestBody RecycleBinRemoveReqDTO requestParam) {
+        shortLinkActualRemoteService.removeRecycleBin(requestParam);
+        return Results.success();
+    }
 
 }

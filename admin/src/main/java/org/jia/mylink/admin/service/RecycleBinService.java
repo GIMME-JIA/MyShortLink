@@ -1,8 +1,10 @@
 package org.jia.mylink.admin.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.jia.mylink.admin.common.convention.result.Result;
 import org.jia.mylink.admin.remote.dto.request.RecycleBinPageReqDTO;
 import org.jia.mylink.admin.remote.dto.response.LinkPageRespDTO;
+
 
 /**
  * 回收站服务接口层
@@ -17,5 +19,6 @@ public interface RecycleBinService {
      * @param requestParam 回收站分页查询请求对象
      * @return 短链接分页查询响应对象
      */
-    IPage<LinkPageRespDTO> pageLink(RecycleBinPageReqDTO requestParam);
+    Result<Page<LinkPageRespDTO>> pageLink(RecycleBinPageReqDTO requestParam);
+
 }
