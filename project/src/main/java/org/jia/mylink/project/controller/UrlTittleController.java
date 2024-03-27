@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2024/3/16
  */
 @RestController
-@RequestMapping("/api/short-link/v1")
+@RequestMapping("/api/short-link/v1/title")
 @RequiredArgsConstructor
 public class UrlTittleController {
 
@@ -28,7 +28,7 @@ public class UrlTittleController {
      * @param url 短链接url
      * @return 网站标题
      */
-    @GetMapping("/title")
+    @GetMapping
     public Result<String> getTitleByUrl(@RequestParam("url") String url) {
         return Results.success(urlTitleService.getTitleByUrl(url));
     }

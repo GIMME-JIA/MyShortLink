@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0
  * @since 2024/3/13
  */
-@Configuration
+@Configuration(value = "dataBaseConfigurationByAdmin")
 public class DataBaseConfiguration {
     /**
      * 分页插件

@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jia.mylink.admin.common.biz.UserContext;
 import org.jia.mylink.admin.common.convention.exception.ClientException;
 import org.jia.mylink.admin.common.convention.exception.ServiceException;
 import org.jia.mylink.admin.common.enums.UserErrorCodeEnum;
@@ -30,6 +31,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -49,8 +51,6 @@ import static org.jia.mylink.admin.common.enums.UserErrorCodeEnum.*;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements UserService {
-
-
     /**
      * 用户注册缓存穿透布隆过滤器
      */
@@ -94,27 +94,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         }
 
         RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY + username);
+        if (!lock.tryLock()) {
+            throw new ClientException(USER_NAME_EXIST);
+        }
 
         try {
-            if (lock.tryLock()) {
-                try {
-                    UserDO userDO = BeanUtil.toBean(requestParam, UserDO.class);
-                    int inserted = baseMapper.insert(userDO);
+            UserDO userDO = BeanUtil.toBean(requestParam, UserDO.class);
+            int inserted = baseMapper.insert(userDO);
 
-                    if (inserted < 1) {
-                        throw new ClientException((USER_SAVE_ERROR));
-                    }
-                } catch (DuplicateKeyException ex) {
-                    throw new ClientException(USER_EXIST);
-                }
-
-                userRegisterCachePenetrationBloomFilter.add(requestParam.getUsername());
-                groupService.saveGroup(DEFAULT_GROUP_NAME);
-
-            } else {
+            if (inserted < 1) {
                 throw new ClientException((USER_SAVE_ERROR));
             }
 
+            userRegisterCachePenetrationBloomFilter.add(requestParam.getUsername());
+            groupService.saveGroup(requestParam.getUsername(),DEFAULT_GROUP_NAME);
+
+        } catch (DuplicateKeyException ex) {
+            throw new ClientException(USER_EXIST);
         } finally {
             lock.unlock();
         }
@@ -122,7 +118,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Override
     public void updateUser(UserUpdateReqDTO requestParam) {
-        // TODO (JIA,2024/3/11,10:47) 验证当前用户名是否为登录用户
+        if (!Objects.equals(requestParam.getUsername(), UserContext.getUsername())) {
+            throw new ClientException("当前登录用户修改请求异常");
+        }
+
         LambdaUpdateWrapper<UserDO> updateWrapper = Wrappers.lambdaUpdate(UserDO.class)
                 .eq(UserDO::getUsername, requestParam.getUsername());
 
@@ -168,7 +167,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         stringRedisTemplate.expire(key, TIME_OUT_30, TimeUnit.MINUTES);
 
         return new UserLoginRespDTO(uuid);
-
     }
 
     @Override
@@ -178,7 +176,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Override
     public void logout(String username, String token) {
-        if (!checkLogin(username,token)) {
+        if (!checkLogin(username, token)) {
             throw new ClientException(USER_NOT_LOGIN);
         }
 

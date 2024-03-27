@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: short-link-aggregation
+    name: mylink-aggregation
 
   datasource:
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver

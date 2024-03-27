@@ -2,7 +2,6 @@ package org.jia.mylink.project.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -13,8 +12,8 @@ import java.util.Date;
  * @version 1.0
  * @since 2024/3/12
  */
-@Primary
-@Component(value = "myMetaObjectHandlerByAdmin")
+
+@Component(value = "myMetaObjectHandlerByProject")
 public class MyMetaObjectHandler implements MetaObjectHandler {
     /**
      * 插入时字段填充

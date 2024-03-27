@@ -53,7 +53,6 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
 
     @Override
     public void saveGroup(String groupName) {
-        // TODO (JIA,2024/3/14,12:21) 此处获取的用户名为空
         saveGroup(UserContext.getUsername(),groupName);
     }
 

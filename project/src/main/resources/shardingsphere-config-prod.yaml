@@ -9,6 +9,7 @@ dataSources:
     username: root
     password: Ljf20031227 # 数据库密码
 
+
 rules:
   - !SHARDING
     tables:
@@ -37,13 +38,13 @@ rules:
             shardingAlgorithmName: link_goto_table_hash_mod
 
       t_link_stats_today:
-        actualDataNodes: ds_0.t_link_stats_today_${0..15}
+        actualDataNodes: mysql.t_link_stats_today_${0..15}
         tableStrategy:
           standard:
             shardingColumn: gid
             shardingAlgorithmName: link_stats_today_hash_mod
 
-    # 绑定表
+    # 绑定表：分片键要相同
     bindingTables:
       - t_link, t_link_stats_today
 
@@ -65,9 +66,12 @@ rules:
           sharding-count: 16
 
       link_stats_today_hash_mod:
+        # 根据分片键 Hash 分片
         type: HASH_MOD
+        # 分片数量
         props:
           sharding-count: 16
+
 
 # 展现逻辑 SQL & 真实 SQL
 props:

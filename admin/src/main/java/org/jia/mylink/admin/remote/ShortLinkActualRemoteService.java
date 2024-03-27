@@ -20,8 +20,9 @@ import java.util.List;
  * @version 1.0
  * @since 2024/3/23
  */
-@FeignClient(value = "short-link-project", url = "${aggregation.remote-url:}")
-@RequestMapping("/api/short-link/v1")
+@FeignClient(value = "mylink-project", url = "${aggregation.remote-url:}")
+// @FeignClient(value = "mylink-project")
+// @RequestMapping("/api/short-link/v1") @RequestMapping注解是不允许的，因为@FeignClient接口上不允许使用该注解
 public interface ShortLinkActualRemoteService {
 
     /**
@@ -30,7 +31,7 @@ public interface ShortLinkActualRemoteService {
      * @param requestParam 创建短链接请求参数
      * @return 短链接创建响应
      */
-    @PostMapping("/create")
+    @PostMapping("/api/short-link/v1/create")
     Result<LinkCreateRespDTO> createShortLink(@RequestBody LinkCreateReqDTO requestParam);
 
     /**
@@ -39,7 +40,7 @@ public interface ShortLinkActualRemoteService {
      * @param requestParam 批量创建短链接请求参数
      * @return 短链接批量创建响应
      */
-    @PostMapping("/create/batch")
+    @PostMapping("/api/short-link/v1/create/batch")
     Result<LinkBatchCreateRespDTO> batchCreateShortLink(@RequestBody LinkBatchCreateReqDTO requestParam);
 
     /**
@@ -47,7 +48,7 @@ public interface ShortLinkActualRemoteService {
      *
      * @param requestParam 修改短链接请求参数
      */
-    @PostMapping("/update")
+    @PostMapping("/api/short-link/v1/update")
     void updateShortLink(@RequestBody LinkUpdateReqDTO requestParam);
 
     /**
@@ -59,7 +60,7 @@ public interface ShortLinkActualRemoteService {
      * @param size     当前数据多少
      * @return 查询短链接响应
      */
-    @GetMapping("/page")
+    @GetMapping("/api/short-link/v1/page")
     Result<Page<LinkPageRespDTO>> pageShortLink(@RequestParam("gid") String gid,
                                                      @RequestParam("orderTag") String orderTag,
                                                      @RequestParam("current") Long current,
@@ -71,7 +72,7 @@ public interface ShortLinkActualRemoteService {
      * @param requestParam 分组短链接总量请求参数
      * @return 查询分组短链接总量响应
      */
-    @GetMapping("/count")
+    @GetMapping("/api/short-link/v1/count")
     Result<List<LinkGroupCountQueryRespDTO>> listGroupShortLinkCount(@RequestParam("requestParam") List<String> requestParam);
 
     /**
@@ -80,7 +81,7 @@ public interface ShortLinkActualRemoteService {
      * @param url 目标网站地址
      * @return 网站标题
      */
-    @GetMapping("/title")
+    @GetMapping("/api/short-link/v1/title")
     Result<String> getTitleByUrl(@RequestParam("url") String url);
 
     /**
@@ -88,7 +89,7 @@ public interface ShortLinkActualRemoteService {
      *
      * @param requestParam 请求参数
      */
-    @PostMapping("/recycle-bin/save")
+    @PostMapping("/api/short-link/v1/recycle-bin/save")
     void saveRecycleBin(@RequestBody RecycleBinSaveReqDTO requestParam);
 
     /**
@@ -99,7 +100,7 @@ public interface ShortLinkActualRemoteService {
      * @param size    当前数据多少
      * @return 查询短链接响应
      */
-    @GetMapping("/recycle-bin/page")
+    @GetMapping("/api/short-link/v1/recycle-bin/page")
     Result<Page<LinkPageRespDTO>> pageRecycleBinShortLink(@RequestParam("gidList") List<String> gidList,
                                                           @RequestParam("current") Long current,
                                                           @RequestParam("size") Long size);
@@ -109,7 +110,7 @@ public interface ShortLinkActualRemoteService {
      *
      * @param requestParam 短链接恢复请求参数
      */
-    @PostMapping("/recycle-bin/recover")
+    @PostMapping("/api/short-link/v1/recycle-bin/recover")
     void recoverRecycleBin(@RequestBody RecycleBinRecoverReqDTO requestParam);
 
     /**
@@ -117,7 +118,7 @@ public interface ShortLinkActualRemoteService {
      *
      * @param requestParam 短链接移除请求参数
      */
-    @PostMapping("/recycle-bin/remove")
+    @PostMapping("/api/short-link/v1/recycle-bin/remove")
     void removeRecycleBin(@RequestBody RecycleBinRemoveReqDTO requestParam);
 
 
@@ -130,7 +131,7 @@ public interface ShortLinkActualRemoteService {
      * @param endDate      结束时间
      * @return 短链接监控信息
      */
-    @GetMapping("/stats")
+    @GetMapping("/api/short-link/v1/stats")
     Result<LinkStatsRespDTO> oneShortLinkStats(@RequestParam("fullShortUrl") String fullShortUrl,
                                                     @RequestParam("gid") String gid,
                                                     @RequestParam("startDate") String startDate,
@@ -144,7 +145,7 @@ public interface ShortLinkActualRemoteService {
      * @param endDate   结束时间
      * @return 分组短链接监控信息
      */
-    @GetMapping("/stats/group")
+    @GetMapping("/api/short-link/v1/stats/group")
     Result<LinkStatsRespDTO> groupShortLinkStats(@RequestParam("gid") String gid,
                                                  @RequestParam("startDate") String startDate,
                                                  @RequestParam("endDate") String endDate);
@@ -158,7 +159,7 @@ public interface ShortLinkActualRemoteService {
      * @param endDate      结束时间
      * @return 短链接监控访问记录信息
      */
-    @GetMapping("/stats/access-record")
+    @GetMapping("/api/short-link/v1/stats/access-record")
     Result<Page<LinkStatsAccessRecordRespDTO>> shortLinkStatsAccessRecord(@RequestParam("fullShortUrl") String fullShortUrl,
                                                                                @RequestParam("gid") String gid,
                                                                                @RequestParam("startDate") String startDate,

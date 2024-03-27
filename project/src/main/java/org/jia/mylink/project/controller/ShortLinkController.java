@@ -29,7 +29,6 @@ import java.util.List;
  * @since 2024/3/12
  */
 @RestController
-@RequestMapping(path = "/api/short-link/v1")
 // @RequestMapping(path = "/api/short-link/admin/v1")
 @RequiredArgsConstructor
 public class ShortLinkController {
@@ -46,7 +45,6 @@ public class ShortLinkController {
      */
     @GetMapping("/{short-uri}")
     public void restoreUrl(@PathVariable("short-uri") String shortUri, ServletRequest request, ServletResponse response) {
-
         linkService.restoreUrl(shortUri, request, response);
     }
 
@@ -56,7 +54,7 @@ public class ShortLinkController {
      * @param requestParam 短链接创建请求对象
      * @return 短链接创建响应对象
      */
-    @PostMapping("/create")
+    @PostMapping("/api/short-link/v1/create")
     @SentinelResource(
             value = "create_short-link",
             blockHandler = "createShortLinkBlockHandlerMethod",
@@ -72,7 +70,7 @@ public class ShortLinkController {
      * @param requestParam 短链接创建请求对象
      * @return 短链接创建响应对象
      */
-    @PostMapping("/create/by-lock")
+    @PostMapping("/api/short-link/v1/create/by-lock")
     public Result<LinkCreateRespDTO> createShortLinkByLock(@RequestBody LinkCreateReqDTO requestParam) {
         return Results.success(linkService.createShortLinkByLock(requestParam));
     }
@@ -83,7 +81,7 @@ public class ShortLinkController {
      * @param requestParam 批量创建短链接请求对象
      * @return 批量创建短链接响应对象
      */
-    @PostMapping("/create/batch")
+    @PostMapping("/api/short-link/v1/create/batch")
     public Result<LinkBatchCreateRespDTO> batchCreateShortLink(@RequestBody LinkBatchCreateReqDTO requestParam) {
         return Results.success(linkService.batchCreateShortLink(requestParam));
     }
@@ -94,7 +92,7 @@ public class ShortLinkController {
      * @param requestParam 短链接分页查询请求对象
      * @return 短链接分页查询响应对象的集合
      */
-    @GetMapping("/page")
+    @GetMapping("/api/short-link/v1/page")
     public Result<IPage<LinkPageRespDTO>> pageLink(LinkPageReqDTO requestParam) {
         return Results.success(linkService.pageLink(requestParam));
     }
@@ -105,7 +103,7 @@ public class ShortLinkController {
      * @param requestParam 短链接分组id集合
      * @return 短链接分组查询响应对象
      */
-    @GetMapping("/count")
+    @GetMapping("/api/short-link/v1/count")
     public Result<List<LinkGroupCountQueryRespDTO>> listGroupLinkCount(@RequestParam("requestParam") List<String> requestParam) {
         return Results.success(linkService.listGroupLinkCount(requestParam));
     }
@@ -115,7 +113,7 @@ public class ShortLinkController {
      *
      * @param requestParam 短链接修改请求对象
      */
-    @PostMapping("/update")
+    @PostMapping("/api/short-link/v1/update")
     public Result<Void> updateLink(@RequestBody LinkUpdateReqDTO requestParam) {
         linkService.updateLink(requestParam);
         return Results.success();

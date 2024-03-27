@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RequiredArgsConstructor
 @RequestMapping("/api/short-link/v1/recycle-bin")
-@RestController
+@RestController(value = "recycleBinControllerByProject")
 public class RecycleBinController {
     private final RecycleBinServiceImpl recycleBinService;
 

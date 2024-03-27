@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static org.jia.mylink.admin.common.constant.ServiceConstant.DEL_FLAG_0;
+
 /**
  * 回收站服务实现层
  * @author JIA
@@ -28,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecycleBinServiceImpl implements RecycleBinService {
 
+
     private final ShortLinkActualRemoteService shortLinkActualRemoteService;
 
     private final GroupMapper groupMapper;
@@ -37,7 +40,7 @@ public class RecycleBinServiceImpl implements RecycleBinService {
     public Result<Page<LinkPageRespDTO>> pageLink(RecycleBinPageReqDTO requestParam) {
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getUsername, UserContext.getUsername())
-                .eq(GroupDO::getDelFlag, 0);
+                .eq(GroupDO::getDelFlag, DEL_FLAG_0);
         List<GroupDO> groupDOList = groupMapper.selectList(queryWrapper);
         if (CollUtil.isEmpty(groupDOList)) {
             throw new ServiceException("用户无分组信息");

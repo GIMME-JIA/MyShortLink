@@ -26,10 +26,10 @@ import java.util.List;
  * @version 1.0
  * @since 2024/3/14
  */
-@RestController
+@RestController(value = "shortLinkControllerByAdmin")
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/short-link/v1")
-// @RequestMapping(path = "/api/short-link/admin/v1/link")
+// @RequestMapping(path = "/api/short-link/v1")
+@RequestMapping(path = "/api/short-link/admin/v1")
 public class ShortLinkController {
 
     private final ShortLinkActualRemoteService shortLinkActualRemoteService;
@@ -65,7 +65,7 @@ public class ShortLinkController {
      * 修改短链接
      * @param requestParam 短链接修改请求对象
      */
-    @PutMapping("/update")
+    @PostMapping("/update")
     public Result<Void> updateLink(@RequestBody LinkUpdateReqDTO requestParam){
         shortLinkActualRemoteService.updateShortLink(requestParam);
         return Results.success();

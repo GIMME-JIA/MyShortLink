@@ -21,6 +21,6 @@ public class RedisCacheConstant {
     /**
      * 用户登录缓存key前缀
      */
-    public static final String KEY_USER_LOGIN = "user:login:";
+    public static final String KEY_USER_LOGIN = "short-link:user:login:";
     public static final Long TIME_OUT_30 = 30L;
 }

@@ -12,14 +12,14 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0
  * @since 2024/3/10
  */
-@Configuration(value = "rBloomFilterConfigurationByAdmin")
+@Configuration(value = "rBloomFilterConfigurationByProject")
 public class RBloomFilterConfiguration {
     /**
-     * 防止用户注册查询数据库的布隆过滤器
+     * 防止短链接创建查询数据库的布隆过滤器
      */
     @Bean
-    public RBloomFilter<String> userRegisterCachePenetrationBloomFilter(RedissonClient redissonClient) {
-        RBloomFilter<String> cachePenetrationBloomFilter = redissonClient.getBloomFilter("userRegisterCachePenetrationBloomFilter");
+    public RBloomFilter<String> shortUriCreateCachePenetrationBloomFilter(RedissonClient redissonClient) {
+        RBloomFilter<String> cachePenetrationBloomFilter = redissonClient.getBloomFilter("shortUriCreateCachePenetrationBloomFilter");
         /*
         tryInit 有两个核心参数：
             ● expectedInsertions：预估布隆过滤器存储的元素长度。设为一亿
